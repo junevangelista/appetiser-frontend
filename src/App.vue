@@ -1,50 +1,64 @@
 <template>
-  <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+  <v-app id="inspire">
+    <v-navigation-drawer v-model="drawer" app>
+      <event-form @event:created="appendItemsIntoCalendar"></event-form>
+    </v-navigation-drawer>
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+    <v-app-bar app>
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <v-toolbar-title>Appetiser Apps Coding Challenge</v-toolbar-title>
     </v-app-bar>
 
     <v-main>
-      <router-view />
+      <div>
+        <v-btn icon class="ma-2" @click="$refs.calendar.prev()">
+          <v-icon>mdi-chevron-left</v-icon>
+        </v-btn>
+        <v-btn icon class="ma-2" @click="$refs.calendar.next()">
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
+        <v-calendar
+          ref="calendar"
+          v-model="value"
+          type="month"
+          :events="events"
+        ></v-calendar>
+      </div>
     </v-main>
   </v-app>
 </template>
 
 <script>
+import axios from "axios";
+import EventForm from "./components/EventForm.vue";
+
 export default {
-  name: "App",
+  components: { EventForm },
 
   data: () => ({
-    //
+    drawer: null,
+
+    value: "",
+    events: [],
   }),
+
+  methods: {
+    appendItemsIntoCalendar(items) {
+      // push new items into the events array
+      items.forEach((item) => {
+        this.events.push(item);
+      });
+    },
+  },
+
+  async mounted() {
+    try {
+      const res = await axios.get("http://appetiser-app.test/api/events");
+      this.events = res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 </script>
