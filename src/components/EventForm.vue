@@ -110,10 +110,7 @@ export default {
   methods: {
     async handleSubmit() {
       try {
-        const res = await axios.post(
-          "http://appetiser-app.test/api/events",
-          this.form
-        );
+        const res = await axios.post("/events", this.form);
 
         this.$emit("event:created", res.data);
 

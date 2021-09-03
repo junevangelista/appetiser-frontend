@@ -54,7 +54,7 @@ export default {
 
   async mounted() {
     try {
-      const res = await axios.get("http://appetiser-app.test/api/events");
+      const res = await axios.get("/events");
       this.events = res.data;
     } catch (error) {
       console.log(error);
